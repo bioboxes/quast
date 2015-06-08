@@ -51,7 +51,7 @@ if [ ! -z "$CACHE" ]; then
 fi
 
 eval ${CMD}
-cp -r "${WORK_DIR}/combined_quast_output" /bbx/output
+cp -r "${WORK_DIR}/combined_quast_output" $OUTPUT
 
 cat << EOF > ${OUTPUT}/biobox.yaml
 version: 0.9.0
