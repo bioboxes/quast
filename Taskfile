@@ -1,0 +1,1 @@
+default: python /usr/local/quast/metaquast.py $REFERENCES --output-dir $WORK_DIR $CONTIGS  

@@ -1,0 +1,64 @@
+#!/bin/bash
+
+set -o errexit
+set -o nounset
+
+TASK=$1
+OUTPUT=/bbx/output
+INPUT=/bbx/input/biobox.yaml
+METADATA=/bbx/metadata
+
+#validate yaml
+validate-biobox-file --schema /schema.yml --input $INPUT
+
+# Run the given task
+CMD=$(egrep ^${TASK}: /Taskfile | cut -f 2 -d ':')
+if [[ -z ${CMD} ]]; then
+  echo "Abort, no task found for '${TASK}'."
+  exit 1
+fi
+
+# if /bbx/metadata is mounted create log.txt
+if [ -d "$METADATA" ]; then
+  CMD="($CMD) >& $METADATA/log.txt"
+fi
+
+WORK_DIR=$(mktemp -d)
+
+INPUT_JSON="${WORK_DIR}/biobox.json"
+
+$(yaml2json < ${INPUT} > $INPUT_JSON)
+
+ARGUMENTS=$(jq  --raw-output '.arguments[]' $INPUT_JSON )
+
+#get fasta
+CONTIGS=$( echo $ARGUMENTS | jq --raw-output 'select(has("fasta")) | .fasta[].value ' | tr '\n' ' ')
+
+#get references
+REFERENCES=$(find  $( echo $ARGUMENTS | jq --raw-output 'select(has("fasta_dir")) | .fasta_dir ') -maxdepth 1 -type f | head -c -1 | tr '\n' ',')
+
+#check if cache is defined
+if [ ! -z "$REFERENCES" ]; then
+        REFERENCES=" -R $REFERENCES "
+fi
+
+#get cache
+CACHE=$( echo $ARGUMENTS | jq --raw-output 'select(has("cache")) | .cache ' )
+
+#check if cache is defined
+if [ ! -z "$CACHE" ]; then
+        WORK_DIR=$CACHE
+fi
+
+eval ${CMD}
+cp -r "${WORK_DIR}/combined_quast_output" /bbx/output
+
+cat << EOF > ${OUTPUT}/biobox.yaml
+version: 0.9.0
+results:
+  - name: HTML
+    type: html
+    inline: false
+    value: combined_quast_output/report.html
+    description: A summary of multiple metrics.
+EOF
