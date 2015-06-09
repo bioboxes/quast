@@ -34,6 +34,10 @@ ARGUMENTS=$(jq  --raw-output '.arguments[]' $INPUT_JSON )
 #get fasta
 CONTIGS=$( echo $ARGUMENTS | jq --raw-output 'select(has("fasta")) | .fasta[].value ' | tr '\n' ' ')
 
+#get labels
+LABELS=$( echo $ARGUMENTS | jq --raw-output 'select(has("fasta")) | .fasta[].id ' | head -c -1 | tr '\n' ','  )
+LABELS=" -l ${LABELS}"
+
 #get references
 REFERENCES=$(find  $( echo $ARGUMENTS | jq --raw-output 'select(has("fasta_dir")) | .fasta_dir ') -maxdepth 1 -type f | head -c -1 | tr '\n' ',')
 
