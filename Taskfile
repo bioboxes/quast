@@ -1,1 +1,2 @@
-default: python /usr/local/quast/metaquast.py $LABELS  $REFERENCES --output-dir $WORK_DIR $CONTIGS  
+default: python /usr/local/quast/quast.py $LABELS $REFERENCES --output-dir $WORK_DIR $CONTIGS  
+metaquast-default: python /usr/local/quast/metaquast.py $LABELS $REFERENCES --output-dir $WORK_DIR $CONTIGS  
