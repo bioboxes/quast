@@ -1,6 +1,6 @@
 FROM ubuntu:latest
 
-ENV PACKAGES wget make xz-utils g++ python perl ca-certificates
+ENV PACKAGES wget make xz-utils g++ python python3.4 python3-bs4 perl ca-certificates
 RUN apt-get update -y && apt-get install -y --no-install-recommends ${PACKAGES}
 
 ENV URL http://iweb.dl.sourceforge.net/project/quast/quast-2.3.tar.gz
@@ -52,5 +52,7 @@ RUN wget \
 ENV PATH ${PATH}:${VALIDATOR}
 
 ADD schema.yml /
+
+ADD htmlParser.py /
 
 ENTRYPOINT ["/run"]
