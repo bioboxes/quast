@@ -12,7 +12,7 @@ RUN cd ${DIR} &&\
     wget --quiet --no-check-certificate ${URL} --output-document - |\
     tar xzf - --directory . --strip-components=1 && \
     cd libs/MUMmer3.23-linux && \
-    make
+    make CPPFLAGS="-O3 -DSIXTYFOURBITS"
 
 COPY ./run /
 
