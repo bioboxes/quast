@@ -67,6 +67,6 @@ results:
   - name: HTML
     type: html
     inline: false
-    value: combined_quast_output/standalone_report.html
+    value: combined_reference/standalone_report.html
     description: A summary of multiple metrics.
 EOF
