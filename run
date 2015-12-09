@@ -56,10 +56,9 @@ fi
 
 eval ${CMD}
 
-COMBINED_OUTPUT=${WORK_DIR}/combined_reference
+COMBINED_OUTPUT=${WORK_DIR}/combined_quast_output
 python3.4 /htmlParser.py --prefix "${COMBINED_OUTPUT}/"  --input "${COMBINED_OUTPUT}/report.html" --output "${COMBINED_OUTPUT}/standalone_report.html"
 cp  -r "${COMBINED_OUTPUT}" $OUTPUT
-chmod -R a+rw  "${OUTPUT}"
 
 cat << EOF > ${OUTPUT}/biobox.yaml
 version: 0.9.0
@@ -70,3 +69,4 @@ results:
     value: combined_reference/standalone_report.html
     description: A summary of multiple metrics.
 EOF
+chmod -R a+rw  "${OUTPUT}"
