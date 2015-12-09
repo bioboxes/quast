@@ -56,7 +56,7 @@ fi
 
 eval ${CMD}
 
-COMBINED_OUTPUT=${WORK_DIR}/combined_quast_output
+COMBINED_OUTPUT=${WORK_DIR}/combined_reference
 python3.4 /htmlParser.py --prefix "${COMBINED_OUTPUT}/"  --input "${COMBINED_OUTPUT}/report.html" --output "${COMBINED_OUTPUT}/standalone_report.html"
 cp  -r "${COMBINED_OUTPUT}" $OUTPUT
 chmod -R a+rw  "${OUTPUT}"
