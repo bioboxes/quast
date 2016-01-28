@@ -56,7 +56,6 @@ fi
 
 eval ${CMD}
 
-COMBINED_OUTPUT=${WORK_DIR}/combined_quast_output
 python3.4 /htmlParser.py --prefix "${COMBINED_OUTPUT}/"  --input "${COMBINED_OUTPUT}/report.html" --output "${COMBINED_OUTPUT}/standalone_report.html"
 cp  -r "${COMBINED_OUTPUT}" $OUTPUT
 
@@ -66,7 +65,7 @@ results:
   - name: HTML
     type: html
     inline: false
-    value: combined_reference/standalone_report.html
+    value: ${QUAST_OUT}/standalone_report.html
     description: A summary of multiple metrics.
 EOF
 chmod -R a+rw  "${OUTPUT}"
