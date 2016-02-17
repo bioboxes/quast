@@ -56,7 +56,6 @@ fi
 
 eval ${CMD}
 
-python3.4 /htmlParser.py --prefix "${COMBINED_OUTPUT}/"  --input "${COMBINED_OUTPUT}/report.html" --output "${COMBINED_OUTPUT}/standalone_report.html"
 cp  -r "${COMBINED_OUTPUT}" $OUTPUT
 
 cat << EOF > ${OUTPUT}/biobox.yaml
@@ -65,7 +64,7 @@ results:
   - name: HTML
     type: html
     inline: false
-    value: ${QUAST_OUT}/standalone_report.html
+    value: ${QUAST_OUT}/report.html
     description: A summary of multiple metrics.
 EOF
 chmod -R a+rw  "${OUTPUT}"

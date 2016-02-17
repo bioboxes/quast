@@ -1,6 +1,6 @@
 FROM ubuntu:latest
 
-ENV PACKAGES wget make xz-utils g++ python python3.4 python3-bs4 python-matplotlib perl ca-certificates
+ENV PACKAGES wget make xz-utils g++ python python-matplotlib perl ca-certificates
 RUN apt-get update -y && apt-get install -y --no-install-recommends ${PACKAGES}
 
 ENV URL https://downloads.sourceforge.net/project/quast/quast-3.2.tar.gz
@@ -52,7 +52,5 @@ RUN wget \
 ENV PATH ${PATH}:${VALIDATOR}
 
 ADD schema.yml /
-
-ADD htmlParser.py /
 
 ENTRYPOINT ["/run"]
