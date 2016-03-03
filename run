@@ -54,11 +54,16 @@ if [ ! -z "$CACHE" ]; then
         WORK_DIR=$CACHE
 fi
 
-eval ${CMD}
+quast() {
+	set -o nounset
+	local QUAST_OUT=$1
+	local QUAST_VERSION=$2
+	local COMBINED_OUTPUT=${WORK_DIR}/${QUAST_OUT}
 
-cp  -r "${COMBINED_OUTPUT}" $OUTPUT
+	python /usr/local/quast/${QUAST_VERSION} ${LABELS} ${REFERENCES} --threads `nproc` --output-dir ${COMBINED_OUTPUT} ${CONTIGS}
+	cp  -r ${COMBINED_OUTPUT} ${OUTPUT}
 
-cat << EOF > ${OUTPUT}/biobox.yaml
+	cat << EOF > ${OUTPUT}/biobox.yaml
 version: 0.9.0
 results:
   - name: HTML
@@ -67,4 +72,8 @@ results:
     value: ${QUAST_OUT}/report.html
     description: A summary of multiple metrics.
 EOF
+
+}
+
+eval ${CMD}
 chmod -R a+rw  "${OUTPUT}"
