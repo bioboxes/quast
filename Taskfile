@@ -1,3 +1,3 @@
-default: QUAST_OUT="combined_quast_output" && COMBINED_OUTPUT=${WORK_DIR}/${QUAST_OUT} && python /usr/local/quast/quast.py $LABELS $REFERENCES --threads `nproc` --output-dir ${COMBINED_OUTPUT} $CONTIGS  
-metaquast-default: QUAST_OUT="combined_reference" && COMBINED_OUTPUT=${WORK_DIR}/${QUAST_OUT} && python /usr/local/quast/metaquast.py $LABELS $REFERENCES --threads `nproc` --output-dir $WORK_DIR $CONTIGS  
-metaquast-scaffold: QUAST_OUT="combined_reference" && COMBINED_OUTPUT=${WORK_DIR}/${QUAST_OUT} && python /usr/local/quast/metaquast.py $LABELS $REFERENCES --threads `nproc` --scaffolds --output-dir $WORK_DIR $CONTIGS  
+default: quast "combined_quast_output" "quast.py"
+metaquast-default: quast "combined_reference" "metaquast.py"
+metaquast-scaffold: quast "combined_reference" "metaquast.py"
