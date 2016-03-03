@@ -3,30 +3,22 @@ FROM ubuntu:latest
 ENV PACKAGES wget make xz-utils g++ python python-matplotlib perl ca-certificates
 RUN apt-get update -y && apt-get install -y --no-install-recommends ${PACKAGES}
 
-ENV URL https://downloads.sourceforge.net/project/quast/quast-3.2.tar.gz
+ENV URL https://s3-us-west-1.amazonaws.com/bioboxes-packages/downloads/quast-3.2.tar.xz
 ENV DIR /usr/local/quast
 
 RUN mkdir ${DIR}
 
 RUN cd ${DIR} &&\
     wget --quiet --no-check-certificate ${URL} --output-document - |\
-    tar xzf - --directory . --strip-components=1 && \
+    tar xJf - --directory . --strip-components=1 && \
     cd libs/MUMmer3.23-linux && \
     make CPPFLAGS="-O3 -DSIXTYFOURBITS"
 
 COPY ./run /
 
-RUN wget \
-      --quiet \
-      --output-document -\
-      ${URL} \
-    | tar xzf - \
-      --directory ${DIR} \
-      --strip-components=1
-
 ENV CONVERT https://github.com/bronze1man/yaml2json/raw/master/builds/linux_386/yaml2json
 # download yaml2json and make it executable
-RUN cd /usr/local/bin && wget --quiet ${CONVERT} && chmod 700 yaml2json 
+RUN cd /usr/local/bin && wget --quiet ${CONVERT} && chmod 700 yaml2json
 
 ENV JQ http://stedolan.github.io/jq/download/linux64/jq
 # download jq and make it executable
