@@ -1,6 +1,6 @@
-FROM ubuntu:latest
+FROM bioboxes/biobox-minimal-base@sha256:b1d26c3bd23b85cbdbf55540c8c5a65efdb5f99fb15966eb5b0e5b6187af5dfc
 
-ENV PACKAGES wget make xz-utils g++ python python-matplotlib perl ca-certificates
+ENV PACKAGES make g++ python python-matplotlib perl
 RUN apt-get update -y && apt-get install -y --no-install-recommends ${PACKAGES}
 
 ENV URL https://s3-us-west-1.amazonaws.com/bioboxes-packages/downloads/quast-3.2.tar.xz
@@ -15,34 +15,7 @@ RUN cd ${DIR} &&\
     make CPPFLAGS="-O3 -DSIXTYFOURBITS"
 
 COPY ./run /
-
-ENV CONVERT https://github.com/bronze1man/yaml2json/raw/master/builds/linux_386/yaml2json
-# download yaml2json and make it executable
-RUN cd /usr/local/bin && wget --quiet ${CONVERT} && chmod 700 yaml2json
-
-ENV JQ http://stedolan.github.io/jq/download/linux64/jq
-# download jq and make it executable
-RUN cd /usr/local/bin && wget --quiet ${JQ} && chmod 700 jq
-
 ADD /Taskfile /
-
-# Locations for biobox file validator
-ENV VALIDATOR /bbx/validator/
-ENV BASE_URL https://s3-us-west-1.amazonaws.com/bioboxes-tools/validate-biobox-file
-ENV VERSION  0.x.y
-RUN mkdir -p ${VALIDATOR}
-
-# download the validate-biobox-file binary and extract it to the directory $VALIDATOR
-RUN wget \
-      --quiet \
-      --output-document -\
-      ${BASE_URL}/${VERSION}/validate-biobox-file.tar.xz \
-    | tar xJf - \
-      --directory ${VALIDATOR} \
-      --strip-components=1
-
-ENV PATH ${PATH}:${VALIDATOR}
-
 ADD schema.yml /
 
 ENTRYPOINT ["/run"]
