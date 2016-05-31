@@ -6,8 +6,8 @@ RUN apt-get update -y && apt-get install -y --no-install-recommends ${PACKAGES}
 ADD install_quast.sh /install_quast.sh
 RUN ./install_quast.sh && rm install_quast.sh
 
-ADD /run /usr/local/bin/
 ADD /Taskfile /
 ADD schema.yml /
+ADD /run /usr/local/bin/
 
 ENTRYPOINT ["run"]
