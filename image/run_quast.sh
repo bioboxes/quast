@@ -7,9 +7,7 @@ TASK=$1
 OUTPUT=/bbx/output
 INPUT=/bbx/input/biobox.yaml
 METADATA=/bbx/metadata
-
-#validate yaml
-validate-biobox-file --schema /schema.yml --input $INPUT
+WORK_DIR=$(mktemp -d)
 
 # Run the given task
 CMD=$(egrep ^${TASK}: /Taskfile | cut -f 2 -d ':')
@@ -23,31 +21,23 @@ if [ -d "$METADATA" ]; then
   CMD="($CMD) >& $METADATA/log.txt"
 fi
 
-WORK_DIR=$(mktemp -d)
+# Input contig FASTA location
+CONTIGS=$(biobox_args.sh 'select(has("fasta")) | .fasta | map(.value) | join(" ")')
 
-INPUT_JSON="${WORK_DIR}/biobox.json"
+# QUAST labels
+LABELS=$(biobox_args.sh 'select(has("fasta")) | .fasta | map(.id) | join(",") | "-l \(.)"')
 
-$(yaml2json < ${INPUT} > $INPUT_JSON)
+# Path to reference genomes
+REF_PATH=$(biobox_args.sh 'select(has("fasta_dir")) | .fasta_dir | rtrimstr(" ")')
 
-ARGUMENTS=$(jq  --raw-output '.arguments[]' $INPUT_JSON )
+#get cache
+CACHE=$(biobox_args.sh 'select(has("cache")) | .cache ')
 
-#get fasta
-CONTIGS=$( echo $ARGUMENTS | jq --raw-output 'select(has("fasta")) | .fasta[].value ' | tr '\n' ' ')
-
-#get labels
-LABELS=$( echo $ARGUMENTS | jq --raw-output 'select(has("fasta")) | .fasta[].id ' | head -c -1 | tr '\n' ','  )
-LABELS=" -l ${LABELS}"
-
-REF_PATH=$( echo $ARGUMENTS | jq --raw-output 'select(has("fasta_dir")) | .fasta_dir ' |  tr -d ' ' )
-
-REFERENCES=""
 #check if cache is defined
+REFERENCES=""
 if [ ! -z "$REF_PATH" ]; then
         REFERENCES=" -R $(find $REF_PATH  -maxdepth 1 -type f | head -c -1 | tr '\n' ',') "
 fi
-
-#get cache
-CACHE=$( echo $ARGUMENTS | jq --raw-output 'select(has("cache")) | .cache ' )
 
 #check if cache is defined
 if [ ! -z "$CACHE" ]; then
@@ -65,7 +55,7 @@ quast() {
 
 	cat << EOF > ${OUTPUT}/biobox.yaml
 version: 0.9.0
-results:
+arguments:
   - name: HTML
     type: html
     inline: false
