@@ -9,8 +9,6 @@ INPUT=/bbx/input/biobox.yaml
 METADATA=/bbx/metadata
 WORK_DIR=$(mktemp -d)
 
-ARGS=$(yaml2json < ${INPUT} | jq  --raw-output '.arguments[]')
-
 # Run the given task
 CMD=$(egrep ^${TASK}: /Taskfile | cut -f 2 -d ':')
 if [[ -z ${CMD} ]]; then
@@ -57,7 +55,7 @@ quast() {
 
 	cat << EOF > ${OUTPUT}/biobox.yaml
 version: 0.9.0
-results:
+arguments:
   - name: HTML
     type: html
     inline: false
