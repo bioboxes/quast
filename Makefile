@@ -15,7 +15,7 @@ bootstrap: vendor/python
 vendor/python:
 	@mkdir -p log
 	@virtualenv $@ 2>&1 > log/virtualenv.txt
-	@$(path) pip install -e git://github.com/bioboxes/command-line-interface.git@a5173a0#egg=biobox-cli
+	@$(path) pip install biobox-cli==0.4.0
 	@touch $@
 
 .PHONY: test bootstrap
