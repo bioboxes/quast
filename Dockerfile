@@ -3,12 +3,12 @@ FROM bioboxes/biobox-minimal-base@sha256:4a64abba8f4b2cd1c2d3f364ba41cb6bf4513c4
 ENV PACKAGES python python-matplotlib
 RUN apt-get update -y && apt-get install -y --no-install-recommends ${PACKAGES}
 
-ADD install_quast.sh /install_quast.sh
+ADD image/install_quast.sh /install_quast.sh
 RUN ./install_quast.sh && rm install_quast.sh
 
-ADD /Taskfile /
-ADD schema.yml /
-ADD /run_quast.sh /usr/local/bin/
+ADD image/Taskfile /
+ADD image/schema.yml /
+ADD image/run_quast.sh /usr/local/bin/
 
 ENV SCHEMA /schema.yml
 ENV BIOBOX_EXEC run_quast.sh

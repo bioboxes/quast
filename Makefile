@@ -6,7 +6,7 @@ test: .image
 	       biobox verify assembler_benchmark $(image) --verbose
 
 .image: $(shell find image -type f )
-	docker build --tag $(image) image
+	docker build --tag $(image) .
 	touch $@
 
 bootstrap: vendor/python
