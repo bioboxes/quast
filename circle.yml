@@ -13,4 +13,4 @@ dependencies:
 test:
   override:
     - make .image
-    - ./script/test
+      #- ./script/test
