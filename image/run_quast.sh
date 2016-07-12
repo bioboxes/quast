@@ -2,6 +2,7 @@
 
 set -o errexit
 set -o nounset
+set -o xtrace
 
 TASK=$1
 OUTPUT=/bbx/output
@@ -25,21 +26,21 @@ fi
 CONTIGS=$(biobox_args.sh 'select(has("fasta")) | .fasta | map(.value) | join(" ")')
 
 # QUAST labels
-LABELS=$(biobox_args.sh 'select(has("fasta")) | .fasta | map(.id) | join(",") | "-l \(.)"')
+LABELS=$(biobox_args.sh 'select(has("fasta")) | .fasta | map(.id | tostring) | join(",") | "-l \(.)"')
 
-# Path to reference genomes
-REF_PATH=$(biobox_args.sh 'select(has("fasta_dir")) | .fasta_dir | rtrimstr(" ")')
+# Path to reference genome directories
+REF_PATH=$(biobox_args.sh 'select(has("fasta_dir")) | .fasta_dir | map(.value) | join(" ")')
 
-#get cache
-CACHE=$(biobox_args.sh 'select(has("cache")) | .cache ')
-
-#check if cache is defined
-REFERENCES=""
+# List reference paths if defined
 if [ ! -z "$REF_PATH" ]; then
-        REFERENCES=" -R $(find $REF_PATH  -maxdepth 1 -type f | head -c -1 | tr '\n' ',') "
+        REFERENCES=" -R $(find $REF_PATH -type f | head -c -1 | tr '\n' ',')"
+else
+	REFERENCES=""
 fi
 
-#check if cache is defined
+# check if cache is defined
+CACHE=$(biobox_args.sh 'select(has("cache")) | .cache ')
+
 if [ ! -z "$CACHE" ]; then
         WORK_DIR=$CACHE
 fi
@@ -51,7 +52,8 @@ quast() {
 	local COMBINED_OUTPUT=${WORK_DIR}/${QUAST_OUT}
 
 	python /usr/local/quast/${QUAST_VERSION} ${LABELS} ${REFERENCES} --threads `nproc` --output-dir ${COMBINED_OUTPUT} ${CONTIGS}
-	cp  -r ${COMBINED_OUTPUT} ${OUTPUT}
+	cp -r ${COMBINED_OUTPUT}/report.tsv ${OUTPUT}
+	cp -r ${COMBINED_OUTPUT} ${OUTPUT}
 
 	cat << EOF > ${OUTPUT}/biobox.yaml
 version: 0.9.0
