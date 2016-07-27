@@ -15,7 +15,7 @@ bootstrap: vendor/python
 vendor/python:
 	@mkdir -p log
 	@virtualenv $@ 2>&1 > log/virtualenv.txt
-	@$(path) pip install biobox-cli==0.4.0
+	@$(path) pip install biobox-cli==0.5.0
 	@touch $@
 
 .PHONY: test bootstrap
