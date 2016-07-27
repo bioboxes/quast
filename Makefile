@@ -1,4 +1,4 @@
-path := PATH=$(abspath ./vendor/python/bin):$(shell echo "${PATH}")
+path  := PATH=$(abspath ./vendor/python/bin):$(shell echo "${PATH}")
 image := biobox_testing/quast
 
 test: .image
@@ -6,11 +6,11 @@ test: .image
 	       biobox verify assembler_benchmark $(image) --verbose
 
 .image: $(shell find image -type f )
-	docker build --tag $(image) .
-	touch $@
+	@docker build --tag $(image) .
+	@touch $@
 
 bootstrap: vendor/python
-	mkdir -p tmp
+	@mkdir -p tmp
 
 vendor/python:
 	@mkdir -p log
