@@ -4,16 +4,19 @@ set -o errexit
 set -o nounset
 set -o xtrace
 
-ESSENTIAL='libsys-info-base-perl libgomp1'
+ESSENTIAL='
+	libfreetype6-dev
+	libgomp1
+	libpng-dev
+	libsys-info-base-perl
+	pkg-config'
+
 BUILD_PACKAGES='make csh g++ less libboost-all-dev zlib1g-dev ca-certificates'
 
 URL='https://github.com/ablab/quast/archive/quast_4.5.tar.gz'
 DIR='/usr/local/quast'
 
 apt-get install --no-install-recommends --yes ${ESSENTIAL} ${BUILD_PACKAGES}
-#apt-get upgrade -y libstdc++6
-
-apt-get update && apt-get install -y pkg-config libfreetype6-dev libpng-dev
 
 mkdir ${DIR}
 cd ${DIR}
@@ -26,6 +29,7 @@ tar xzf - \
 	--strip-components=1
 
 cd ${DIR}/quast_libs/MUMmer && make -j $(nproc)
+cd ${DIR}/quast_libs/MUMmer/e-mem-src && make -j $(nproc)
 cd ${DIR}/quast_libs/bwa && make -j $(nproc)
 cd ${DIR}/quast_libs/glimmer/src/ && make -j $(nproc)
 cd ${DIR}
